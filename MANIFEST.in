@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include knowlarity *.css
+recursive-include knowlarity *.csv
+recursive-include knowlarity *.html
+recursive-include knowlarity *.ico
+recursive-include knowlarity *.js
+recursive-include knowlarity *.json
+recursive-include knowlarity *.md
+recursive-include knowlarity *.png
+recursive-include knowlarity *.py
+recursive-include knowlarity *.svg
+recursive-include knowlarity *.txt
+recursive-exclude knowlarity *.pyc

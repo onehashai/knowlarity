@@ -1,0 +1,27 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2023-07-31 14:10:27.015548",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[],\"fields\":[[\"name\",\"Knowlarity Call Logs\"],[\"customer_number\",\"Knowlarity Call Logs\"],[\"agent_number\",\"Knowlarity Call Logs\"],[\"start_time\",\"Knowlarity Call Logs\"],[\"call_duration\",\"Knowlarity Call Logs\"],[\"status\",\"Knowlarity Call Logs\"],[\"call_recording\",\"Knowlarity Call Logs\"],[\"uuid\",\"Knowlarity Call Logs\"]],\"order_by\":\"`tabKnowlarity Call Logs`.`modified` desc\",\"page_length\":20,\"column_widths\":{\"name\":120,\"customer_number\":120,\"agent_number\":120,\"start_time\":120,\"call_duration\":120,\"status\":120,\"call_recording\":120,\"uuid\":120},\"group_by\":null}",
+ "modified": "2023-07-31 14:13:30.569099",
+ "modified_by": "Administrator",
+ "module": "Knowlarity",
+ "name": "Knowlarity Call Logs",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Knowlarity Call Logs",
+ "report_name": "Knowlarity Call Logs",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ]
+}
