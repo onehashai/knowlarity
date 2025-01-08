@@ -3,10 +3,6 @@ import frappe
 import json
 from datetime import date
         
-# @frappe.whitelist()
-# def onload(doc, method):
-#     frappe.require("/assets/knowlarity/js/contact.js")
-
 @frappe.whitelist()
 def get_contact(userid):        
     temp=None

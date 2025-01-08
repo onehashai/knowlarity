@@ -7,19 +7,12 @@ app_description = "Knowlarity Integration"
 app_email = "abhishek.c@onehash.ai"
 app_license = "MIT"
 
-# doc_events = {
-#     "Contact": {
-#         "onload": "knowlarity.api.onload"
-#     }
-# }
-app_include_js = ["/assets/knowlarity/js/contact.js","/assets/knowlarity/js/lead.js","/assets/knowlarity/js/patient.js","/assets/knowlarity/js/customer.js"]
-
 # Includes in <head>
 # ------------------
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/knowlarity/css/knowlarity.css"
-# app_include_js = "/assets/knowlarity/js/knowlarity.js"
+app_include_js = ["/assets/knowlarity/js/contact.js","/assets/knowlarity/js/lead.js","/assets/knowlarity/js/patient.js","/assets/knowlarity/js/customer.js"]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/knowlarity/css/knowlarity.css"
@@ -138,8 +131,8 @@ app_include_js = ["/assets/knowlarity/js/contact.js","/assets/knowlarity/js/lead
 
 scheduler_events = {
     "cron": {
-	"1-59 * * * *":[
-				"knowlarity.api.get_call_history"
+		"1-59 * * * *":[
+			"knowlarity.api.get_call_history"
 		]
 	}
 #	"all": [
