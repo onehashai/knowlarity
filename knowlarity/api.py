@@ -184,9 +184,6 @@ def get_call_history():
     authorization = kas.authorization
     x_api_key = kas.x_api_key
 
-    frappe.log_error("authorization",authorization)
-    frappe.log_error("x_api_key",x_api_key)
-
     url = "https://kpi.knowlarity.com/Basic/v1/account/calllog?start_time="+formatted_date+"%2000%3A00%3A01%2B05%3A30&end_time="+formatted_date+"%2023%3A59%3A59%2B05%3A30"
 
     payload = {}
@@ -196,7 +193,6 @@ def get_call_history():
     }
 
     response = requests.request("GET", url, headers=headers, data=payload)
-    frappe.log_error("response",response)
 
     response_data = json.loads(str(response.text))
     frappe.log_error("response_data",response_data)
