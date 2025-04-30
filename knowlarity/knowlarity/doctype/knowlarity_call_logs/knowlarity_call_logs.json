@@ -7,6 +7,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "unique_id",
   "customer_number",
   "uuid",
   "agent_number",
@@ -15,7 +16,17 @@
   "start_time",
   "call_duration",
   "call_recording",
-  "status"
+  "status",
+  "added_on_call_details_section",
+  "dtmf_input",
+  "hangup_cause",
+  "call_type",
+  "detailed_log_json",
+  "column_break_rkrz",
+  "pickup_time",
+  "end_time",
+  "call_status",
+  "ivr_flow"
  ],
  "fields": [
   {
@@ -52,6 +63,7 @@
   {
    "fieldname": "status",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Status"
   },
   {
@@ -62,11 +74,70 @@
   {
    "fieldname": "column_break_qwds7",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "added_on_call_details_section",
+   "fieldtype": "Section Break",
+   "label": "Added On Call Details"
+  },
+  {
+   "description": "Keys pressed by customer during the call",
+   "fieldname": "dtmf_input",
+   "fieldtype": "Data",
+   "label": "DTMF Input"
+  },
+  {
+   "fieldname": "hangup_cause",
+   "fieldtype": "Data",
+   "label": "Hangup Cause"
+  },
+  {
+   "fieldname": "call_status",
+   "fieldtype": "Data",
+   "label": "Call Status"
+  },
+  {
+   "description": "Complete JSON response from the detailed call log API",
+   "fieldname": "detailed_log_json",
+   "fieldtype": "Code",
+   "label": "Detailed Log JSON",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "column_break_rkrz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pickup_time",
+   "fieldtype": "Datetime",
+   "label": "Pickup Time"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Datetime",
+   "label": "End Time"
+  },
+  {
+   "description": "JSON data of the IVR flow traversed",
+   "fieldname": "ivr_flow",
+   "fieldtype": "Code",
+   "label": "IVR Flow",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "call_type",
+   "fieldtype": "Data",
+   "label": "Call Type"
+  },
+  {
+   "fieldname": "unique_id",
+   "fieldtype": "Data",
+   "label": "Unique ID"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-08-08 15:41:33.148761",
+ "modified": "2025-04-29 15:18:23.854141",
  "modified_by": "Administrator",
  "module": "Knowlarity",
  "name": "Knowlarity Call Logs",
