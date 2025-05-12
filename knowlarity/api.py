@@ -189,6 +189,7 @@ def get_call_history():
     response = requests.request("GET", url, headers=headers, data=payload)
 
     response_data = json.loads(str(response.text))
+    frappe.log_error("Response Data", response_data)
     objects_list = response_data["objects"] 
 
     mapped_output = []
@@ -257,8 +258,6 @@ def get_detailed_call_log(uuid):
         if not call_data:
             return {"success": False, "message": "No call data found"}
         
-        frappe.log_error("Call Data", call_data)
-        
         # Find and update the call log
         call_logs = frappe.get_list(
             "Knowlarity Call Logs",
@@ -279,7 +278,7 @@ def get_detailed_call_log(uuid):
             "end_time": "end_time",
             "pickup_time": "pickup_time",
             "start_time": "start_time",
-            "hangup_time": "hangup_time"
+            "hangup_time": "hangup_time",
         }
         
         # Update fields
@@ -292,6 +291,9 @@ def get_detailed_call_log(uuid):
             call_log_doc.caller_id = call_data["caller_id"]
         elif "caller" in call_data:
             call_log_doc.caller_id = call_data["caller"]
+
+        if "called" in call_data:
+            call_log_doc.agent_number = call_data["called"]
 
         if "hangup_cause" in call_data:
             hangup_cause = call_data["hangup_cause"]
@@ -364,6 +366,16 @@ def get_detailed_call_log(uuid):
 def post_call_history(cn,uuid,st,an,cd,cr):   
         current_site = frappe.local.site
         kas=frappe.get_doc("Knowlarity Settings")
+        
+        existing_uuid = frappe.db.get_list("Knowlarity Call Logs", 
+                                      fields=['name'], 
+                                      filters={'uuid': uuid})
+    
+        # If UUID already exists, return existing record name without creating a new one
+        if existing_uuid:
+            frappe.log_error(f"Skipped duplicate record creation for UUID: {uuid}", "Knowlarity Call Logs")
+            return existing_uuid[0].name
+        
         kch=frappe.db.get_list("Knowlarity Call Logs",fields=['name','customer_number','start_time'],filters={'customer_number':cn,"start_time":st})
 
         call_log_name = None
@@ -374,14 +386,13 @@ def post_call_history(cn,uuid,st,an,cd,cr):
 
             # km=frappe.db.get_list("Knowlarity User Mapping",fields=['name','user','agent_number','caller_id'],filters={'user':frappe.session.user})
             # for j in km:
-            #     if str(j.agent_number)==str(an)[-13:]:
+            #     if str(j.agent_number)==str(an)[-13:]:    
             
             new_knowlarity_call_logs = frappe.new_doc("Knowlarity Call Logs")
-    
+
             new_knowlarity_call_logs.customer_number = cn
             new_knowlarity_call_logs.uuid = uuid
             new_knowlarity_call_logs.start_time = st
-            new_knowlarity_call_logs.agent_number = str(an)[-13:]
             new_knowlarity_call_logs.call_recording = cr
             new_knowlarity_call_logs.call_status = str(an)[:-14]
             new_knowlarity_call_logs.call_duration = cd
