@@ -373,7 +373,6 @@ def post_call_history(cn,uuid,st,an,cd,cr):
     
         # If UUID already exists, return existing record name without creating a new one
         if existing_uuid:
-            frappe.log_error(f"Skipped duplicate record creation for UUID: {uuid}", "Knowlarity Call Logs")
             return existing_uuid[0].name
         
         kch=frappe.db.get_list("Knowlarity Call Logs",fields=['name','customer_number','start_time'],filters={'customer_number':cn,"start_time":st})
