@@ -189,7 +189,6 @@ def get_call_history():
     response = requests.request("GET", url, headers=headers, data=payload)
 
     response_data = json.loads(str(response.text))
-    frappe.log_error("Response Data", response_data)
     objects_list = response_data["objects"] 
 
     mapped_output = []
