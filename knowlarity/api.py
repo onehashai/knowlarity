@@ -2,6 +2,9 @@ import requests
 import frappe
 import json
 from datetime import date
+
+
+REQUEST_TIMEOUT = (5, 30)
         
 @frappe.whitelist()
 def get_contact(userid):        
@@ -180,39 +183,36 @@ def get_call_history():
 
     url = "https://kpi.knowlarity.com/Basic/v1/account/calllog?start_time="+formatted_date+"%2000%3A00%3A01%2B05%3A30&end_time="+formatted_date+"%2023%3A59%3A59%2B05%3A30"
 
-    payload = {}
     headers = {
     'Authorization': kas.authorization,
     'x-api-key': kas.x_api_key
     }
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    try:
+        response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
+        response.raise_for_status()
+        objects_list = response.json().get("objects", [])
+    except (requests.RequestException, ValueError) as exc:
+        frappe.log_error(frappe.get_traceback(), "Knowlarity Call History Sync")
+        frappe.log_error(str(exc), "Knowlarity Call History Sync")
+        return
 
-    response_data = json.loads(str(response.text))
-    objects_list = response_data["objects"] 
+    if not isinstance(objects_list, list):
+        frappe.log_error("Unexpected call-log response format", "Knowlarity Call History Sync")
+        return
 
-    mapped_output = []
-    for obj in objects_list: 
-            mapped_obj = {
-                "customer_number": obj["customer_number"],
-                "uuid": obj["uuid"],
-                "agent_number": obj["agent_number"],
-                "start_time": obj["start_time"],
-                "call_recording": obj["call_recording"],
-                "call_duration": obj["call_duration"],
-            }
-            mapped_output.append(mapped_obj)
-   
-    if mapped_output:
-        for item in mapped_output:
-            cn=f"{item['customer_number']}"
-            uuid=f"{item['uuid']}"
-            st=f"{item['start_time']}"
-            an=f"{item['agent_number']}"
-            cd=f"{item['call_duration']}"
-            cr=f"{item['call_recording']}"
-            
-            post_call_history(cn,uuid,st,an,cd,cr)
+    for item in objects_list:
+        if not isinstance(item, dict) or not item.get("uuid"):
+            continue
+
+        post_call_history(
+            item.get("customer_number"),
+            item["uuid"],
+            item.get("start_time"),
+            item.get("agent_number"),
+            item.get("call_duration"),
+            item.get("call_recording"),
+        )
 
 #---------------------------------------------------------------------------------------------------
 
@@ -235,7 +235,7 @@ def get_detailed_call_log(uuid):
     }
     
     try:
-        response = requests.request("GET", url, headers=headers, data={})
+        response = requests.get(url, headers=headers, timeout=REQUEST_TIMEOUT)
         
         if response.status_code != 200:
             frappe.log_error(f"API Error: {response.status_code}", "Knowlarity API")
@@ -366,21 +366,21 @@ def post_call_history(cn,uuid,st,an,cd,cr):
         current_site = frappe.local.site
         kas=frappe.get_doc("Knowlarity Settings")
         
-        existing_uuid = frappe.db.get_list("Knowlarity Call Logs", 
-                                      fields=['name'], 
-                                      filters={'uuid': uuid})
+        existing_uuid = frappe.db.get_value(
+            "Knowlarity Call Logs", {"uuid": uuid}, "name"
+        )
     
         # If UUID already exists, return existing record name without creating a new one
         if existing_uuid:
-            return existing_uuid[0].name
+            return existing_uuid
         
-        kch=frappe.db.get_list("Knowlarity Call Logs",fields=['name','customer_number','start_time'],filters={'customer_number':cn,"start_time":st})
+        call_log_name = frappe.db.get_value(
+            "Knowlarity Call Logs",
+            {"customer_number": cn, "start_time": st},
+            "name",
+        )
 
-        call_log_name = None
-    
-        if kch:
-            call_log_name = kch[0].name
-        else:
+        if not call_log_name:
 
             # km=frappe.db.get_list("Knowlarity User Mapping",fields=['name','user','agent_number','caller_id'],filters={'user':frappe.session.user})
             # for j in km:
